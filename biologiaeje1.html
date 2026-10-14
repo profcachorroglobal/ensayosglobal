@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La célula: organelos y estructura-función</title>
+<style>
+:root{--bg:#0b1220;--panel:#131e36;--line:#243456;--txt:#e9eefb;--mut:#9fb1d4;--c:#38bdf8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#040810;color:var(--txt);font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;background:radial-gradient(1100px 650px at 15% -10%,#18305c 0%,var(--bg) 62%);overflow:hidden;border-radius:8px;box-shadow:0 0 60px rgba(0,0,0,.6)}
+.slide{position:absolute;inset:0;padding:44px 64px;display:none}
+.slide.active{display:block;animation:in .45s ease}
+@keyframes in{from{opacity:0;transform:translateX(34px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.slide.active .card,.slide.active .row,.slide.active .tile,.slide.active .step{animation:pop .5s ease both}
+.slide.active .card:nth-child(2){animation-delay:.12s}
+.slide.active .row:nth-child(2){animation-delay:.08s}.slide.active .row:nth-child(3){animation-delay:.16s}
+.slide.active .row:nth-child(4){animation-delay:.24s}.slide.active .row:nth-child(5){animation-delay:.32s}
+.slide.active .row:nth-child(6){animation-delay:.4s}.slide.active .row:nth-child(7){animation-delay:.48s}
+.kick{display:inline-block;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--c);font-weight:700}
+h1{font-size:68px;line-height:1.05;letter-spacing:-.02em}
+h2{font-size:48px;line-height:1.1;letter-spacing:-.01em}
+.tag{color:var(--mut);font-size:22px;margin-top:6px}
+/* title */
+.slide.active.title{display:flex;flex-direction:column;justify-content:center;gap:22px}
+.title .sub{font-size:26px;color:var(--mut);max-width:760px;line-height:1.4}
+.title h1 span{color:var(--c)}
+.title .bg{position:absolute;right:-90px;top:50%;transform:translateY(-50%);width:620px;height:620px;opacity:.9;color:var(--c)}
+.pill{display:inline-block;padding:6px 16px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--mut);font-size:17px;margin-right:8px}
+/* agenda */
+.agenda{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:34px}
+.agenda .card{padding:24px 28px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 26px}
+.card h3{font-size:19px;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+.card ul{list-style:none}
+.card li{font-size:21px;line-height:1.38;padding-left:22px;position:relative;margin-bottom:9px}
+.card li::before{content:"";position:absolute;left:0;top:.6em;width:9px;height:9px;border-radius:50%;background:var(--c)}
+.agenda p{font-size:21px;color:var(--mut);margin-top:6px;line-height:1.4}
+.agenda h3{font-size:26px;margin-bottom:4px;text-transform:none;letter-spacing:0;color:var(--txt)}
+/* organelle */
+.hd{height:112px}
+.org .body{display:grid;grid-template-columns:330px 1fr;gap:34px;height:440px;margin-top:10px}
+.vis{display:flex;flex-direction:column;align-items:center;gap:16px}
+.disc{width:310px;height:310px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.09),rgba(255,255,255,.02));border:2px solid color-mix(in srgb,var(--c) 55%,transparent);display:flex;align-items:center;justify-content:center;color:var(--c);box-shadow:0 0 50px color-mix(in srgb,var(--c) 22%,transparent)}
+.disc svg{width:86%;height:86%}
+.chips{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.chip{font-size:15px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);color:#6f7f9f}
+.chip.si{background:color-mix(in srgb,var(--c) 22%,transparent);border-color:var(--c);color:#fff;font-weight:600}
+.chip.parcial{border-style:dashed;border-color:var(--c);color:#d6e0f7}
+.nota{font-size:14px;color:var(--mut);text-align:center;line-height:1.3;max-width:310px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-content:start}
+.fact{position:absolute;left:64px;right:64px;bottom:34px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 22%,transparent),rgba(255,255,255,.03));border-left:5px solid var(--c);border-radius:10px;padding:14px 22px;font-size:20px;line-height:1.35}
+.fact b{color:var(--c);margin-right:8px;text-transform:uppercase;font-size:15px;letter-spacing:.1em}
+/* tables */
+table{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:18px}
+th{font-size:16px;letter-spacing:.1em;text-transform:uppercase;text-align:left;color:var(--c);padding:6px 18px}
+td{background:var(--panel);padding:13px 18px;font-size:21px;line-height:1.3}
+td:first-child{border-radius:12px 0 0 12px;font-weight:700;color:#fff;border-left:4px solid var(--c)}
+td:last-child{border-radius:0 12px 12px 0}
+/* procariont */
+.proc{display:grid;grid-template-columns:690px 1fr;gap:20px;margin-top:10px}
+.proc svg{width:100%;height:430px}
+.proc svg text{fill:#e9eefb;font-size:15px;font-family:inherit}
+.leg li{list-style:none;font-size:19px;margin-bottom:11px;line-height:1.3;color:var(--mut)}
+.leg b{color:#fff}
+/* flow */
+.flow{display:flex;align-items:stretch;gap:0;margin-top:34px}
+.step{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px;text-align:center;position:relative}
+.step .n{width:34px;height:34px;border-radius:50%;background:var(--c);color:#04101f;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.step h4{font-size:20px;margin-bottom:6px}
+.step p{font-size:16px;color:var(--mut);line-height:1.32}
+.arrow{width:30px;display:flex;align-items:center;justify-content:center;color:var(--c);font-size:28px}
+.flow-note{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:26px}
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.tile{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:12px;padding:11px 14px}
+.tile h4{font-size:18px;margin-bottom:3px;color:var(--c)}
+.tile p{font-size:15px;color:var(--mut);line-height:1.28}
+/* cell type */
+.ct{display:grid;grid-template-columns:330px 1fr;gap:34px;margin-top:10px}
+.rows{display:flex;flex-direction:column;gap:9px}
+.row{display:grid;grid-template-columns:1fr 34px 1.25fr;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 16px;font-size:18px;line-height:1.28}
+.row b{color:#fff}
+.row .ar{color:var(--c);font-size:22px;text-align:center}
+.row span{color:#cdd8f1}
+.key{margin-top:16px;font-size:21px;text-align:center;color:#fff;font-weight:600;line-height:1.3}
+.key em{color:var(--c);font-style:normal}
+/* section */
+.slide.active.section{display:flex;flex-direction:column;justify-content:center;gap:18px}
+.section .big{font-size:150px;font-weight:800;color:var(--c);opacity:.9;line-height:1}
+.section p{font-size:26px;color:var(--mut);max-width:800px;line-height:1.4}
+/* ui */
+#bar{position:fixed;left:0;top:0;height:4px;background:linear-gradient(90deg,#f59e0b,#38bdf8,#4ade80);width:0;transition:width .3s;z-index:10}
+#ui{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:10;background:rgba(10,18,34,.82);border:1px solid var(--line);border-radius:99px;padding:5px 8px;opacity:.35;transition:opacity .25s}
+#ui:hover{opacity:1}
+#ui button{background:none;border:0;color:#fff;font-size:20px;width:34px;height:34px;border-radius:50%;cursor:pointer}
+#ui button:hover{background:rgba(255,255,255,.12)}
+#cnt{font-size:14px;color:var(--mut);min-width:64px;text-align:center;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage"></div>
+<div id="ui"><button id="prev" aria-label="Anterior">‹</button><span id="cnt"></span><button id="next" aria-label="Siguiente">›</button><button id="fs" aria-label="Pantalla completa" title="Pantalla completa (F)">⛶</button></div>
+
+<script>
+/* ---------- Dibujos SVG (viewBox 0 0 200 200, color = currentColor) ---------- */
+const BG='#0b1220';
+const SV={};
+SV.capsula=`<rect x="10" y="52" width="180" height="96" rx="48" fill="currentColor" opacity=".13" stroke="currentColor" stroke-dasharray="3 5"/><rect x="26" y="66" width="148" height="68" rx="34" fill="none" stroke="currentColor" stroke-width="7"/><rect x="36" y="76" width="128" height="48" rx="24" fill="currentColor" opacity=".35" stroke="currentColor" stroke-width="2"/><path d="M60 100c10-14 18 14 28 0s18 14 28 0 14 8 24 0" fill="none" stroke="currentColor" stroke-width="3"/><text x="100" y="40" text-anchor="middle" font-size="12" fill="currentColor">cápsula</text>`;
+SV.pared=`<rect x="22" y="40" width="156" height="120" rx="14" fill="none" stroke="currentColor" stroke-width="15"/><rect x="38" y="56" width="124" height="88" rx="7" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="3"/><circle cx="100" cy="100" r="20" fill="currentColor" opacity=".55"/><path d="M22 70h-4M22 100h-4M22 130h-4M178 70h4M178 100h4M178 130h4" stroke="currentColor" stroke-width="3"/><text x="100" y="188" text-anchor="middle" font-size="12" fill="currentColor">celulosa</text>`;
+SV.membrana=(()=>{let s='';for(let x=14;x<=186;x+=14){s+=`<circle cx="${x}" cy="62" r="6.5" fill="currentColor"/><path d="M${x-2} 68v32M${x+2} 68v32" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="${x}" cy="138" r="6.5" fill="currentColor"/><path d="M${x-2} 132v-32M${x+2} 132v-32" stroke="currentColor" stroke-width="1.8" fill="none"/>`}
+return s+`<rect x="86" y="46" width="26" height="108" rx="13" fill="currentColor" opacity=".6"/><ellipse cx="44" cy="40" rx="15" ry="8" fill="currentColor" opacity=".5"/><path d="M150 56V36l9-9M150 36l-9-9M168 56V42l8-8" stroke="currentColor" stroke-width="2.5" fill="none"/><circle cx="159" cy="27" r="4" fill="currentColor"/><circle cx="141" cy="27" r="4" fill="currentColor"/><circle cx="176" cy="34" r="4" fill="currentColor"/><ellipse cx="146" cy="100" rx="9" ry="5" fill="currentColor" opacity=".35"/>`})();
+SV.citoesqueleto=`<circle cx="100" cy="100" r="24" fill="currentColor" opacity=".45"/><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M100 76L38 28M100 76L164 22M124 100L188 112M100 124L66 186M100 124L142 182M76 100L14 94" stroke-width="6"/><path d="M28 62l14 6-10 8 14 6-10 8M176 150l-14-6 10-8-14-6 10-8M108 38l10 10-10 10 10 10M150 70l8 8-8 8 8 8" stroke-width="2.6"/><path d="M60 168l22-6M170 90l12-14" stroke-width="3" stroke-dasharray="1 5"/></g>`;
+SV.nucleo=(()=>{let p='';for(let i=0;i<12;i++){const a=i*Math.PI/6;p+=`<circle cx="${100+82*Math.cos(a)}" cy="${100+82*Math.sin(a)}" r="4.5" fill="${BG}" stroke="currentColor" stroke-width="2"/>`}
+return `<circle cx="100" cy="100" r="86" fill="currentColor" opacity=".12"/><circle cx="100" cy="100" r="82" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="100" cy="100" r="74" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="86" cy="96" r="22" fill="currentColor"/><path d="M128 66c18 10-10 24 6 36s-14 22 4 32M56 134c-10 6 6 14-4 24M118 50c-18 4-8 14-22 14M62 70c-8 6 4 12-4 18" fill="none" stroke="currentColor" stroke-width="3" opacity=".75"/>`+p})();
+SV.nucleolo=(()=>{let d='';const pts=[[78,78],[96,70],[118,80],[130,98],[122,122],[100,132],[78,124],[68,102],[90,100],[108,104],[100,86],[84,112]];pts.forEach(([x,y])=>d+=`<circle cx="${x}" cy="${y}" r="5" fill="${BG}" opacity=".55"/>`);
+return `<circle cx="100" cy="100" r="86" fill="currentColor" opacity=".12" stroke="currentColor" stroke-width="3"/><circle cx="100" cy="100" r="46" fill="currentColor" opacity=".9"/>`+d+`<circle cx="160" cy="46" r="7" fill="currentColor"/><circle cx="170" cy="62" r="5" fill="currentColor"/><circle cx="40" cy="156" r="7" fill="currentColor"/><circle cx="30" cy="140" r="5" fill="currentColor"/><path d="M146 66l-18 14M54 142l18-14" stroke="currentColor" stroke-width="2.5" stroke-dasharray="3 4"/>`})();
+SV.reticulos=(()=>{let d='';for(let x=24;x<=176;x+=19){d+=`<circle cx="${x}" cy="26" r="3.4" fill="currentColor"/><circle cx="${x+5}" cy="48" r="3.4" fill="currentColor"/><circle cx="${x}" cy="66" r="3.4" fill="currentColor"/>`}
+return `<g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M14 36c20-12 32 12 52 0s32 12 52 0 32 12 68 0" stroke-width="9"/><path d="M14 58c20-12 32 12 52 0s32 12 52 0 32 12 68 0" stroke-width="9"/></g>`+d+`<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="7" opacity=".85"><path d="M20 130c16-18 26 14 42 0s22-18 38-2 26 10 42-4 20 6 30-4"/><path d="M50 160c14-12 20 12 34 2s20-14 32-2 22 8 36-6"/><path d="M62 128c4 10 0 20 8 30M120 126c-6 12 2 22-4 34"/></g><text x="100" y="94" text-anchor="middle" font-size="12" fill="currentColor">RER</text><text x="100" y="190" text-anchor="middle" font-size="12" fill="currentColor">REL</text>`})();
+SV.ribosomas=`<ellipse cx="100" cy="124" rx="54" ry="38" fill="currentColor"/><ellipse cx="100" cy="74" rx="36" ry="25" fill="currentColor" opacity=".6"/><path d="M6 100c30 8 50-8 94 0s64 8 94 0" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><g fill="currentColor"><circle cx="134" cy="92" r="5"/><circle cx="148" cy="76" r="5"/><circle cx="158" cy="58" r="5"/><circle cx="172" cy="46" r="5"/><circle cx="186" cy="38" r="5"/></g><path d="M134 92L186 38" stroke="currentColor" stroke-width="2"/><text x="100" y="128" text-anchor="middle" font-size="13" fill="${BG}" font-weight="700">sub. mayor</text><text x="100" y="78" text-anchor="middle" font-size="12" fill="${BG}" font-weight="700">sub. menor</text><text x="26" y="92" font-size="11" fill="#fff">ARNm</text>`;
+SV.golgi=`<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="10"><path d="M40 156c40 12 80 12 120 0"/><path d="M36 130c44 12 84 12 128 0"/><path d="M36 104c44 12 84 12 128 0"/><path d="M40 78c40 12 80 12 120 0"/><path d="M50 52c34 10 66 10 100 0"/></g><g fill="currentColor"><circle cx="22" cy="170" r="8"/><circle cx="14" cy="148" r="5"/><circle cx="176" cy="40" r="9"/><circle cx="190" cy="62" r="6"/><circle cx="170" cy="86" r="5" opacity=".7"/></g><text x="24" y="192" font-size="13" fill="currentColor">cis</text><text x="150" y="26" font-size="13" fill="currentColor">trans</text>`;
+SV.lisosomas=`<circle cx="100" cy="100" r="66" fill="currentColor" opacity=".22" stroke="currentColor" stroke-width="5"/><g fill="currentColor"><circle cx="70" cy="76" r="6"/><circle cx="96" cy="64" r="5"/><circle cx="128" cy="76" r="6"/><circle cx="140" cy="104" r="5"/><circle cx="64" cy="108" r="5"/><circle cx="80" cy="136" r="6"/><circle cx="116" cy="138" r="5"/><circle cx="100" cy="104" r="4"/></g><path d="M92 90c10-8 22-6 26 4s-4 20-14 20-20-8-12-24z" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="4 3"/><text x="100" y="188" text-anchor="middle" font-size="12" fill="currentColor">enzimas hidrolíticas</text>`;
+SV.peroxisomas=`<circle cx="100" cy="100" r="64" fill="currentColor" opacity=".2" stroke="currentColor" stroke-width="5"/><rect x="74" y="74" width="52" height="52" rx="4" fill="currentColor"/><path d="M74 91h52M74 108h52M91 74v52M108 74v52" stroke="${BG}" stroke-width="2" opacity=".6"/><g fill="currentColor"><circle cx="50" cy="96" r="4"/><circle cx="148" cy="120" r="4"/><circle cx="134" cy="60" r="4"/><circle cx="62" cy="140" r="4"/><circle cx="104" cy="148" r="3"/></g><text x="100" y="190" text-anchor="middle" font-size="13" fill="currentColor">H₂O₂ → H₂O + O₂</text>`;
+SV.mitocondrias=`<ellipse cx="100" cy="100" rx="90" ry="54" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="5"/><ellipse cx="100" cy="100" rx="78" ry="42" fill="none" stroke="currentColor" stroke-width="2.5"/><g stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"><path d="M46 72v34M64 128v-40M82 70v40M100 130v-42M118 70v42M136 128v-40M154 74v32"/></g><path d="M60 118c10-6 14 6 24 0M120 112c10-6 14 6 24 0" stroke="currentColor" stroke-width="2" fill="none" opacity=".7"/><text x="100" y="178" text-anchor="middle" font-size="13" fill="currentColor">crestas · matriz</text>`;
+SV.cloroplastos=(()=>{let g='';[[56,86],[92,70],[128,92],[84,112],[120,120]].forEach(([x,y])=>{for(let i=0;i<4;i++)g+=`<rect x="${x}" y="${y+i*7}" width="30" height="5" rx="2.5" fill="currentColor"/>`});
+return `<ellipse cx="100" cy="100" rx="90" ry="62" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="5"/><ellipse cx="100" cy="100" rx="80" ry="52" fill="none" stroke="currentColor" stroke-width="2"/><path d="M86 94l8 4M122 82l-12-8M110 112l-10 6M118 106l8-10M72 102l-6 8" stroke="currentColor" stroke-width="2" opacity=".7"/>`+g+`<text x="100" y="182" text-anchor="middle" font-size="13" fill="currentColor">grana · estroma</text>`})();
+SV.vacuolas=`<rect x="12" y="24" width="176" height="152" rx="18" fill="none" stroke="currentColor" stroke-width="9"/><path d="M52 54c26-16 70-14 94 6 20 20 12 62-10 78-26 18-70 12-84-14-12-22-8-52 0-70z" fill="currentColor" opacity=".3" stroke="currentColor" stroke-width="3" stroke-dasharray="1 0"/><ellipse cx="38" cy="132" rx="12" ry="9" fill="currentColor" opacity=".8"/><ellipse cx="168" cy="52" rx="12" ry="8" fill="currentColor" opacity=".6"/><circle cx="170" cy="144" r="8" fill="currentColor" opacity=".7"/><text x="100" y="104" text-anchor="middle" font-size="13" fill="currentColor">vacuola central</text><text x="100" y="120" text-anchor="middle" font-size="11" fill="currentColor">(tonoplasto)</text>`;
+SV.centriolos=(()=>{let r='';for(let i=0;i<9;i++){const a=i*2*Math.PI/9-Math.PI/2,cx=62+34*Math.cos(a),cy=62+34*Math.sin(a),t=a+Math.PI/2;for(let k=-1;k<=1;k++){r+=`<circle cx="${(cx+Math.cos(t)*k*7+Math.cos(a)*(k==0?0:0)).toFixed(1)}" cy="${(cy+Math.sin(t)*k*7).toFixed(1)}" r="3.4" fill="currentColor"/>`}}
+let c='';for(let i=0;i<5;i++)c+=`<path d="M${108+i*16} 126v54" stroke="${BG}" stroke-width="2" opacity=".5"/>`;
+return r+`<circle cx="62" cy="62" r="6" fill="currentColor" opacity=".5"/><rect x="104" y="128" width="84" height="50" rx="8" fill="currentColor" opacity=".85"/>`+c+`<text x="62" y="118" text-anchor="middle" font-size="11" fill="currentColor">corte transversal</text><text x="146" y="194" text-anchor="middle" font-size="11" fill="currentColor">vista lateral</text>`})();
+SV.cilios=(()=>{let a='';for(let i=0;i<9;i++){const an=i*2*Math.PI/9-Math.PI/2,x=152+28*Math.cos(an),y=52+28*Math.sin(an),t=an+Math.PI/2;a+=`<circle cx="${(x+Math.cos(t)*4).toFixed(1)}" cy="${(y+Math.sin(t)*4).toFixed(1)}" r="3.4" fill="currentColor"/><circle cx="${(x-Math.cos(t)*4).toFixed(1)}" cy="${(y-Math.sin(t)*4).toFixed(1)}" r="3.4" fill="currentColor"/>`}
+let h='';for(let i=0;i<6;i++){const x=12+i*13;h+=`<path d="M${x} 112c-4-14 6-22 2-34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>`}
+return a+`<circle cx="152" cy="52" r="3.4" fill="currentColor"/><circle cx="152" cy="52" r="3" fill="currentColor"/><circle cx="145" cy="52" r="3" fill="currentColor"/><circle cx="159" cy="52" r="3" fill="currentColor"/><circle cx="152" cy="52" r="38" fill="none" stroke="currentColor" stroke-width="2"/>`+h+`<rect x="6" y="112" width="84" height="22" rx="11" fill="currentColor" opacity=".4"/><path d="M14 168c20-30 40 30 60 0s40 30 60 0 28 20 42 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><ellipse cx="10" cy="168" rx="9" ry="7" fill="currentColor"/><text x="48" y="104" text-anchor="middle" font-size="11" fill="currentColor">cilios</text><text x="152" y="108" text-anchor="middle" font-size="11" fill="currentColor">axonema 9+2</text><text x="100" y="192" text-anchor="middle" font-size="11" fill="currentColor">flagelo</text>`})();
+/* tipos celulares */
+SV.enterocito=(()=>{let m='';for(let x=64;x<=172;x+=12)m+=`<rect x="${x}" y="30" width="7" height="30" rx="3.5" fill="currentColor"/>`;
+return m+`<rect x="58" y="60" width="124" height="160" rx="14" fill="currentColor" opacity=".2" stroke="currentColor" stroke-width="3"/><rect x="52" y="60" width="9" height="14" fill="currentColor"/><rect x="179" y="60" width="9" height="14" fill="currentColor"/><ellipse cx="120" cy="186" rx="32" ry="20" fill="currentColor" opacity=".75"/><g fill="currentColor" opacity=".6"><ellipse cx="86" cy="110" rx="12" ry="6"/><ellipse cx="152" cy="118" rx="12" ry="6"/><ellipse cx="100" cy="142" rx="12" ry="6"/><ellipse cx="146" cy="150" rx="12" ry="6"/></g><text x="120" y="20" text-anchor="middle" font-size="12" fill="currentColor">microvellosidades</text><text x="120" y="236" text-anchor="middle" font-size="12" fill="currentColor">lumen intestinal ↑ · sangre ↓</text>`})();
+SV.musculo=(()=>{let s='';for(let x=34;x<=196;x+=24)s+=`<rect x="${x}" y="82" width="3" height="76" fill="currentColor"/><rect x="${x+6}" y="104" width="12" height="32" rx="2" fill="currentColor" opacity=".65"/><path d="M${x+3} 112h3M${x+3} 128h3M${x+18} 112h3M${x+18} 128h3" stroke="currentColor" stroke-width="2"/>`;
+return `<rect x="10" y="76" width="220" height="88" rx="44" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="3"/>`+s+`<ellipse cx="54" cy="80" rx="14" ry="5" fill="currentColor"/><ellipse cx="126" cy="160" rx="14" ry="5" fill="currentColor"/><ellipse cx="196" cy="80" rx="14" ry="5" fill="currentColor"/><text x="120" y="60" text-anchor="middle" font-size="12" fill="currentColor">sarcómeros (actina + miosina)</text><text x="120" y="190" text-anchor="middle" font-size="12" fill="currentColor">fibra multinucleada</text>`})();
+SV.neurona=`<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="4"><path d="M62 90L30 52M30 52L12 50M30 52L26 30M56 80L36 90M52 100L18 114M58 110L38 140M38 140L24 148M38 140L40 160M68 70L66 36M66 36L52 24M66 36L78 24"/></g><circle cx="86" cy="104" r="26" fill="currentColor" opacity=".35" stroke="currentColor" stroke-width="3"/><circle cx="86" cy="104" r="10" fill="currentColor"/><path d="M112 104H196" stroke="currentColor" stroke-width="5"/><g fill="currentColor" opacity=".85"><rect x="122" y="94" width="20" height="20" rx="8"/><rect x="148" y="94" width="20" height="20" rx="8"/></g><g stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"><path d="M196 104l16-18M196 104l18 0M196 104l16 18"/></g><g fill="currentColor"><circle cx="214" cy="84" r="5"/><circle cx="218" cy="104" r="5"/><circle cx="214" cy="124" r="5"/></g><text x="30" y="14" font-size="12" fill="currentColor">dendritas</text><text x="76" y="154" text-anchor="middle" font-size="12" fill="currentColor">soma</text><text x="150" y="82" text-anchor="middle" font-size="12" fill="currentColor">axón + mielina</text><text x="204" y="150" text-anchor="middle" font-size="12" fill="currentColor">sinapsis</text>`;
+SV.acinar=(()=>{let g='';[[104,90],[126,84],[116,106],[138,100],[98,112],[128,124]].forEach(([x,y])=>g+=`<circle cx="${x}" cy="${y}" r="7" fill="currentColor"/>`);
+return `<path d="M72 216 L168 216 L152 62 L88 62 Z" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><rect x="104" y="40" width="32" height="20" rx="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/>`+g+`<g fill="none" stroke="currentColor" stroke-width="3" opacity=".85"><path d="M82 176c10-8 16 8 26 0s16 8 26 0"/><path d="M80 190c10-8 16 8 26 0s16 8 26 0"/><path d="M82 204c10-8 16 8 26 0s16 8 26 0"/></g><g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M92 150c14 6 36 6 50-2"/><path d="M96 140c12 5 30 5 42-2"/></g><ellipse cx="146" cy="190" rx="14" ry="12" fill="currentColor" opacity=".8"/><text x="120" y="22" text-anchor="middle" font-size="12" fill="currentColor">luz del conducto</text><text x="186" y="94" font-size="11" fill="currentColor">gránulos</text><text x="186" y="108" font-size="11" fill="currentColor">de zimógeno</text><text x="196" y="156" font-size="11" fill="currentColor">Golgi</text><text x="196" y="190" font-size="11" fill="currentColor">núcleo</text><text x="10" y="196" font-size="11" fill="currentColor">RER</text>`})();
+
+/* ---------- Datos ---------- */
+const C={proc:'#f59e0b',com:'#a78bfa',ani:'#38bdf8',veg:'#4ade80',rose:'#fb7185',teal:'#2dd4bf',amber:'#fbbf24',sky:'#60a5fa'};
+const O=[
+{n:'Cápsula',t:'Cubierta externa de muchas bacterias',c:C.proc,s:'capsula',p:{proc:'si',ani:'no',veg:'no'},nota:'Solo en algunas bacterias',
+ e:['Capa viscosa de polisacáridos (a veces polipéptidos) por fuera de la pared celular','No es esencial para la vida: no todas las bacterias la tienen'],
+ f:['Protege de la desecación y de la fagocitosis','Permite adherirse a superficies y formar biopelículas','Es un factor de virulencia en bacterias patógenas'],
+ d:'Streptococcus pneumoniae sin cápsula es inofensivo: la cápsula es lo que lo hace patógeno.',r:'Protección y adhesión bacteriana'},
+{n:'Pared celular',t:'Soporte y forma por fuera de la membrana',c:C.veg,s:'pared',p:{proc:'si',ani:'no',veg:'si'},nota:'También en hongos (quitina)',
+ e:['Bacterias: peptidoglicano (mureína)','Plantas: microfibrillas de celulosa con hemicelulosa y pectinas','Hongos: quitina. Las células animales no tienen pared'],
+ f:['Da forma y rigidez a la célula','Resiste la presión osmótica e impide la lisis','Permite la turgencia vegetal; es permeable a agua y solutos'],
+ d:'La penicilina bloquea la síntesis del peptidoglicano: daña a las bacterias y no a las células animales.',r:'Soporte, forma y protección'},
+{n:'Membrana celular',t:'Límite y puerta de entrada de la célula',c:C.com,s:'membrana',p:{proc:'si',ani:'si',veg:'si'},
+ e:['Bicapa de fosfolípidos: cabezas hidrofílicas hacia fuera, colas hidrofóbicas hacia dentro','Proteínas integrales y periféricas; colesterol en células animales','Glucocálix: glúcidos en la cara externa'],
+ f:['Permeabilidad selectiva: regula lo que entra y sale','Transporte pasivo (difusión, ósmosis) y activo (bomba Na⁺/K⁺)','Endocitosis, exocitosis, reconocimiento y comunicación'],
+ d:'Modelo del mosaico fluido (Singer y Nicolson, 1972): los componentes se mueven lateralmente.',r:'Control de entrada y salida'},
+{n:'Citoesqueleto',t:'Red de filamentos proteicos del citoplasma',c:C.rose,s:'citoesqueleto',p:{proc:'parcial',ani:'si',veg:'si'},nota:'Las bacterias solo tienen proteínas homólogas simples (MreB, FtsZ)',
+ e:['Microfilamentos de actina (~7 nm)','Filamentos intermedios (8–12 nm)','Microtúbulos de tubulina (~25 nm)'],
+ f:['Mantiene la forma y da resistencia mecánica','Movimiento celular, contracción y citocinesis','Transporta vesículas y organelos; forma el huso mitótico'],
+ d:'Es dinámico: se arma y se desarma según lo que necesite la célula.',r:'Forma, movimiento y transporte interno'},
+{n:'Núcleo',t:'Centro de control y almacén del ADN',c:C.sky,s:'nucleo',p:{proc:'no',ani:'si',veg:'si'},nota:'Procariontes: ADN libre en el nucleoide',
+ e:['Envoltura nuclear: doble membrana con poros','Cromatina (ADN + histonas) que se condensa en cromosomas','Nucleoplasma y nucléolo en su interior'],
+ f:['Almacena la información genética','Regula la expresión génica: transcripción del ADN a ARN','Replicación del ADN y control del ciclo celular'],
+ d:'Los poros regulan el tránsito: salen ARNm y subunidades ribosomales; entran proteínas como las histonas.',r:'Almacena el ADN y controla la célula'},
+{n:'Nucléolo',t:'Fábrica de ribosomas dentro del núcleo',c:C.amber,s:'nucleolo',p:{proc:'no',ani:'si',veg:'si'},
+ e:['Región densa del núcleo, sin membrana','Contiene ADN ribosomal (genes de ARNr), ARNr y proteínas'],
+ f:['Síntesis del ARN ribosomal (ARNr)','Ensamblaje de las subunidades ribosomales, que salen al citoplasma','Más grande en células con alta síntesis de proteínas'],
+ d:'Desaparece durante la mitosis y se reforma al terminar la división.',r:'Produce subunidades ribosomales'},
+{n:'Retículos endoplasmáticos',t:'Red de membranas continua con el núcleo',c:C.teal,s:'reticulos',p:{proc:'no',ani:'si',veg:'si'},
+ e:['RER (rugoso): sacos aplanados con ribosomas adheridos','REL (liso): red de túbulos sin ribosomas','Continuos con la envoltura nuclear'],
+ f:['RER: sintetiza proteínas de secreción, de membrana y lisosomales','REL: síntesis de lípidos y esteroides, detoxificación, reserva de Ca²⁺','Envían vesículas de transporte al Golgi'],
+ d:'En el músculo, el REL se especializa como retículo sarcoplásmico y almacena calcio.',r:'Síntesis de proteínas (RER) y lípidos (REL)'},
+{n:'Ribosomas',t:'Maquinaria de síntesis de proteínas',c:C.proc,s:'ribosomas',p:{proc:'si',ani:'si',veg:'si'},nota:'Procariontes 70S · eucariontes 80S',
+ e:['Dos subunidades (mayor y menor) de ARNr y proteínas; sin membrana','Procariontes: 70S (50S + 30S). Eucariontes: 80S (60S + 40S)','Libres en el citosol o adheridos al RER'],
+ f:['Traducción: leen el ARNm y unen aminoácidos','Libres: proteínas de uso interno','En el RER: proteínas de exportación y de membrana'],
+ d:'Son la única estructura de este listado presente en todas las células, procariontes y eucariontes.',r:'Traducen el ARNm a proteínas'},
+{n:'Complejo de Golgi',t:'Centro de modificación, clasificación y despacho',c:C.com,s:'golgi',p:{proc:'no',ani:'si',veg:'si'},
+ e:['Pila de cisternas aplanadas con cara cis (recibe) y cara trans (despacha)','Rodeado de vesículas de transporte'],
+ f:['Modifica proteínas y lípidos (glicosilación)','Clasifica y empaqueta en vesículas de secreción, de membrana y lisosomas','En plantas sintetiza polisacáridos de la pared celular'],
+ d:'Está muy desarrollado en células secretoras, como las pancreáticas y las caliciformes.',r:'Modifica, clasifica y despacha'},
+{n:'Lisosomas',t:'El sistema digestivo de la célula',c:C.rose,s:'lisosomas',p:{proc:'no',ani:'si',veg:'parcial'},nota:'En vegetales, la vacuola cumple funciones similares',
+ e:['Vesícula de una membrana originada en el Golgi','Más de 40 enzimas hidrolíticas, activas a pH ácido (~5)'],
+ f:['Digestión intracelular de moléculas y partículas fagocitadas','Autofagia: reciclaje de organelos dañados','Defensa: destruyen bacterias en macrófagos'],
+ d:'En la enfermedad de Tay-Sachs falta una enzima lisosomal y se acumulan lípidos en las neuronas.',r:'Digestión intracelular'},
+{n:'Peroxisomas',t:'Oxidación y detoxificación',c:C.amber,s:'peroxisomas',p:{proc:'no',ani:'si',veg:'si'},
+ e:['Vesícula de una membrana con enzimas oxidasas y catalasa','A veces con un núcleo cristaloide denso'],
+ f:['Oxidan ácidos grasos de cadena muy larga y otros sustratos','Detoxifican alcohol y otras sustancias (hígado, riñón)','Catalasa: 2 H₂O₂ → 2 H₂O + O₂'],
+ d:'El peróxido de hidrógeno es tóxico: se produce y se descompone dentro del mismo organelo.',r:'Oxidación y degradación de H₂O₂'},
+{n:'Mitocondrias',t:'La central energética',c:C.proc,s:'mitocondrias',p:{proc:'no',ani:'si',veg:'si'},
+ e:['Doble membrana: la interna se pliega en crestas','Matriz con ADN circular propio y ribosomas 70S','Se multiplican por fisión'],
+ f:['Respiración celular aerobia: producen la mayor parte del ATP','Ciclo de Krebs (matriz); cadena transportadora y fosforilación oxidativa (crestas)','Participan en la apoptosis y en la homeostasis del Ca²⁺'],
+ d:'Teoría endosimbiótica: derivan de bacterias aerobias incorporadas por una célula ancestral.',r:'Producen ATP por respiración celular'},
+{n:'Cloroplastos',t:'Capturan la luz y fabrican materia orgánica',c:C.veg,s:'cloroplastos',p:{proc:'no',ani:'no',veg:'si'},nota:'También en algas',
+ e:['Doble membrana; en su interior, tilacoides apilados en grana','Estroma con ADN circular y ribosomas 70S','Clorofila y otros pigmentos en la membrana tilacoidal'],
+ f:['Fotosíntesis: fase luminosa en los tilacoides (ATP y NADPH)','Ciclo de Calvin en el estroma: fija CO₂ y forma glucosa','Almacenan almidón'],
+ d:'Como las mitocondrias, tienen origen endosimbiótico (a partir de cianobacterias).',r:'Fotosíntesis'},
+{n:'Vacuolas',t:'Compartimientos de almacenamiento',c:C.teal,s:'vacuolas',p:{proc:'no',ani:'si',veg:'si'},nota:'Animal: pequeñas · Vegetal: una grande central',
+ e:['Vesículas rodeadas por una membrana (tonoplasto en plantas)','Planta adulta: gran vacuola central (puede ocupar hasta ~90% del volumen)','Animales: vacuolas pequeñas y numerosas'],
+ f:['Almacenan agua, iones, azúcares, pigmentos y desechos','Mantienen la turgencia que sostiene los tejidos vegetales','En protistas de agua dulce, la vacuola contráctil expulsa el exceso de agua'],
+ d:'Una planta con poca agua en sus vacuolas pierde turgencia y se marchita.',r:'Almacenamiento y turgencia'},
+{n:'Centriolos',t:'Organizadores de microtúbulos',c:C.sky,s:'centriolos',p:{proc:'no',ani:'si',veg:'no'},nota:'Ausentes en plantas con flor',
+ e:['Par de cilindros perpendiculares dentro del centrosoma','Cada uno con 9 tripletes de microtúbulos (patrón 9+0)'],
+ f:['Organizan el huso mitótico durante la división celular','Originan los cuerpos basales de cilios y flagelos'],
+ d:'Se duplican en la fase S del ciclo celular, antes de la mitosis.',r:'Huso mitótico y cuerpos basales'},
+{n:'Cilios y flagelos',t:'Proyecciones para el movimiento',c:C.rose,s:'cilios',p:{proc:'parcial',ani:'si',veg:'parcial'},nota:'Bacterias: flagelo de flagelina, sin 9+2 · Plantas: solo gametos móviles de algunas',
+ e:['Prolongaciones de membrana con axonema: 9 pares de microtúbulos periféricos + 2 centrales (9+2)','Nacen de un cuerpo basal','Cilios: cortos y numerosos. Flagelos: largos y pocos'],
+ f:['Desplazan a la célula (espermatozoide, protistas)','Mueven fluidos sobre la célula: epitelio respiratorio, trompas uterinas','La dineína genera el deslizamiento de los microtúbulos'],
+ d:'El flagelo bacteriano es distinto: está hecho de flagelina y gira como una hélice.',r:'Locomoción y movimiento de fluidos'}
+];
+const T=[
+{n:'Enterocito',t:'Epitelio del intestino delgado · absorción',c:C.teal,s:'enterocito',
+ r:[['Microvellosidades (borde en cepillo)','Multiplican la superficie de absorción'],
+    ['Enzimas y transportadores en la membrana','Digestión final y paso de nutrientes (glucosa, aminoácidos)'],
+    ['Abundantes mitocondrias','ATP para el transporte activo'],
+    ['Uniones estrechas y desmosomas','Sellan entre células y mantienen la polaridad'],
+    ['REL y Golgi','Resíntesis de triglicéridos y formación de quilomicrones'],
+    ['Filamentos de actina','Sostienen las microvellosidades']],
+ k:'<em>Más superficie</em> + <em>mucha energía</em> = absorción eficiente'},
+{n:'Célula muscular esquelética',t:'Fibra multinucleada · contracción voluntaria',c:C.rose,s:'musculo',
+ r:[['Miofibrillas con sarcómeros','Filamentos de actina y miosina que se deslizan: contracción'],
+    ['Retículo sarcoplásmico y túbulos T','Almacenan y liberan Ca²⁺ que gatilla la contracción'],
+    ['Abundantes mitocondrias','ATP para contraer y relajar'],
+    ['Mioglobina y glucógeno','Reserva de O₂ y de energía'],
+    ['Varios núcleos periféricos','Fibra formada por fusión de mioblastos; mucha síntesis proteica'],
+    ['Sarcolema (membrana excitable)','Conduce el impulso nervioso al interior']],
+ k:'<em>Citoesqueleto especializado</em> + <em>calcio</em> + <em>energía</em> = contracción'},
+{n:'Neurona',t:'Célula del sistema nervioso · comunicación',c:C.sky,s:'neurona',
+ r:[['Dendritas ramificadas','Reciben señales de otras células con gran superficie'],
+    ['Soma con RER abundante (cuerpos de Nissl)','Alta síntesis de proteínas y neurotransmisores'],
+    ['Axón con microtúbulos y neurofilamentos','Soporte y transporte axónico de vesículas y organelos'],
+    ['Membrana con canales iónicos y bomba Na⁺/K⁺','Generan y conducen el potencial de acción'],
+    ['Vaina de mielina (células de Schwann u oligodendrocitos)','Acelera la conducción del impulso'],
+    ['Terminal con mitocondrias y vesículas sinápticas','Liberan neurotransmisores por exocitosis']],
+ k:'<em>Forma alargada y ramificada</em> + <em>membrana excitable</em> = comunicación rápida'},
+{n:'Célula secretora pancreática',t:'Acino exocrino · enzimas digestivas',c:C.com,s:'acinar',
+ r:[['RER muy desarrollado (polo basal)','Síntesis de tripsinógeno, amilasa y lipasa'],
+    ['Complejo de Golgi desarrollado','Modifica, concentra y empaqueta las enzimas'],
+    ['Gránulos de zimógeno (polo apical)','Almacenan enzimas inactivas hasta su liberación'],
+    ['Exocitosis en la membrana apical','Vierte las enzimas al conducto que va al duodeno'],
+    ['Abundantes mitocondrias','Energía para sintetizar y secretar'],
+    ['Núcleo basal con nucléolo evidente','Alta transcripción y producción de ribosomas']],
+ k:'Ruta completa: <em>RER → Golgi → gránulos → exocitosis</em>',
+ x:'Las células β de los islotes de Langerhans usan la misma ruta para secretar insulina.'}
+];
+
+/* ---------- Constructores de diapositivas ---------- */
+const lab={proc:'Procarionte',ani:'Animal',veg:'Vegetal'};
+const lb={si:'',parcial:' (parcial)',no:''};
+const li=a=>a.map(x=>`<li>${x}</li>`).join('');
+const S=[];
+const col=c=>`style="--c:${c}"`;
+
+// 1 portada
+S.push(`<section class="slide title" ${col(C.ani)}>
+<svg class="bg" viewBox="0 0 200 200"><g opacity=".22">${SV.nucleo}</g></svg>
+<span class="kick">Biología celular</span>
+<h1>La célula: <span>organelos</span> y la relación entre estructura y función</h1>
+<p class="sub">Procariontes y eucariontes (animales y vegetales), y cuatro células donde la forma explica la función.</p>
+<div><span class="pill">16 estructuras</span><span class="pill">4 tipos celulares</span></div>
+</section>`);
+
+// 2 agenda
+S.push(`<section class="slide" ${col(C.ani)}>
+<span class="kick">Contenidos</span><h2>¿Qué vamos a ver?</h2>
+<div class="agenda">
+<div class="card"><h3 style="color:${C.proc}">Parte 1</h3><h3 style="color:#fff;text-transform:none;letter-spacing:0;font-size:26px">Estructuras celulares</h3>
+<p>Estructura y función de cápsula, pared, membrana, citoesqueleto, núcleo, nucléolo, retículos, ribosomas, Golgi, lisosomas, peroxisomas, mitocondrias, cloroplastos, vacuolas, centriolos, cilios y flagelos.</p></div>
+<div class="card"><h3 style="color:${C.veg}">Parte 2</h3><h3 style="color:#fff;text-transform:none;letter-spacing:0;font-size:26px">Estructura y función celular</h3>
+<p>Cómo la estructura explica la función en el enterocito, la célula muscular esquelética, la neurona y la célula secretora pancreática.</p></div>
+</div></section>`);
+
+// 3 proc vs euc
+const tbl=(h,rows,c)=>`<table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table>`;
+S.push(`<section class="slide" ${col(C.proc)}><span class="kick">Punto de partida</span><h2>Célula procarionte y eucarionte</h2>
+${tbl(['','Procarionte','Eucarionte'],[
+['Núcleo','Sin núcleo definido: ADN en el nucleoide','Núcleo con envoltura nuclear'],
+['ADN','Circular, sin histonas','Lineal, asociado a histonas'],
+['Organelos membranosos','Ausentes','Presentes (RE, Golgi, mitocondrias…)'],
+['Ribosomas','70S','80S (y 70S en mitocondrias y cloroplastos)'],
+['Tamaño aproximado','1–10 µm','10–100 µm'],
+['Ejemplos','Bacterias y arqueas','Animales, plantas, hongos y protistas']])}
+</section>`);
+
+// 4 bacteria
+S.push(`<section class="slide" ${col(C.proc)}><span class="kick">Procarionte</span><h2>Estructura de una bacteria</h2>
+<div class="proc">
+<svg viewBox="0 0 690 430">
+<rect x="70" y="90" width="500" height="250" rx="125" fill="#f59e0b" opacity=".12" stroke="#f59e0b" stroke-dasharray="4 6" stroke-width="2"/>
+<rect x="88" y="106" width="464" height="218" rx="109" fill="none" stroke="#f59e0b" stroke-width="12"/>
+<rect x="104" y="122" width="432" height="186" rx="93" fill="none" stroke="#fbbf24" stroke-width="4"/>
+<rect x="110" y="128" width="420" height="174" rx="87" fill="#f59e0b" opacity=".18"/>
+<path d="M230 200c20-50 40 40 60 0s40-40 60 0 30 30 40 5" fill="none" stroke="#fb7185" stroke-width="5" stroke-linecap="round"/><path d="M236 236c30 40 60-40 90 0s50 30 70-5" fill="none" stroke="#fb7185" stroke-width="5" stroke-linecap="round"/>
+<g fill="#a78bfa">${[[160,170],[180,230],[150,260],[420,150],[470,190],[450,260],[400,270],[200,150],[500,240]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7"/>`).join('')}</g>
+<path d="M566 215c30-30 50 30 80 0s30 20 44 0" fill="none" stroke="#e9eefb" stroke-width="5" stroke-linecap="round"/>
+<g stroke="#e9eefb" stroke-width="2.5" stroke-linecap="round">${[250,300,350].map(x=>`<path d="M${x} 340v32"/>`).join('')}</g>
+<g stroke="#e9eefb" stroke-width="1.5" fill="none"><path d="M230 56V90M280 56V106M330 56V122M430 56V143"/><path d="M300 372V400"/></g>
+${[[230,40,'1'],[280,40,'2'],[330,40,'3'],[430,40,'5'],[300,414,'6'],[640,170,'7'],[310,216,'4']].map(([x,y,n])=>`<circle cx="${x}" cy="${y}" r="13" fill="#0b1220" stroke="#e9eefb" stroke-width="2"/><text x="${x}" y="${y+5}" text-anchor="middle" font-weight="700">${n}</text>`).join('')}
+</svg>
+<ul class="leg">
+<li><b>1 · Cápsula:</b> capa viscosa externa (no siempre presente)</li>
+<li><b>2 · Pared celular:</b> de peptidoglicano; da forma y protege</li>
+<li><b>3 · Membrana plasmática:</b> controla la entrada y salida; sede de la respiración</li>
+<li><b>4 · Nucleoide:</b> ADN circular libre en el citoplasma</li>
+<li><b>5 · Ribosomas 70S:</b> síntesis de proteínas</li>
+<li><b>6 · Pili:</b> adhesión e intercambio de ADN</li>
+<li><b>7 · Flagelo:</b> locomoción por rotación</li>
+</ul></div></section>`);
+
+// 5 animal vs vegetal
+S.push(`<section class="slide" ${col(C.veg)}><span class="kick">Eucariontes</span><h2>Célula animal y célula vegetal</h2>
+${tbl(['Estructura','Animal','Vegetal'],[
+['Pared celular','No tiene','Sí (celulosa)'],
+['Cloroplastos','No tiene','Sí: fotosíntesis'],
+['Vacuolas','Pequeñas y numerosas','Una gran vacuola central'],
+['Centriolos','Presentes','Ausentes en plantas con flor'],
+['Lisosomas','Presentes','Poco evidentes (la vacuola cumple su rol)'],
+['Forma','Variable','Más fija y poligonal'],
+['Reserva energética','Glucógeno','Almidón']])}
+</section>`);
+
+// 6 sección organelos
+S.push(`<section class="slide section" ${col(C.proc)}><div class="big">01</div><span class="kick">Parte 1</span><h2>Estructuras celulares</h2><p>Para cada una veremos cómo está formada, qué hace y en qué tipos de célula se encuentra.</p></section>`);
+
+// organelos
+O.forEach((o,i)=>{
+ const chips=['proc','ani','veg'].map(k=>`<span class="chip ${o.p[k]}">${lab[k]}${lb[o.p[k]]}</span>`).join('');
+ S.push(`<section class="slide org" ${col(o.c)}>
+ <div class="hd"><span class="kick">Estructura ${i+1} de ${O.length}</span><h2>${o.n}</h2><p class="tag">${o.t}</p></div>
+ <div class="body">
+  <div class="vis"><div class="disc"><svg viewBox="0 0 200 200">${SV[o.s]}</svg></div><div class="chips">${chips}</div>${o.nota?`<p class="nota">${o.nota}</p>`:''}</div>
+  <div class="cols"><div class="card"><h3>Estructura</h3><ul>${li(o.e)}</ul></div><div class="card"><h3>Función</h3><ul>${li(o.f)}</ul></div></div>
+ </div>
+ <div class="fact"><b>Dato clave</b>${o.d}</div></section>`);
+});
+
+// flujo
+const steps=[['Núcleo','El ADN se transcribe a ARNm, que sale por los poros'],['RER','Los ribosomas traducen y la proteína entra al retículo'],['Vesículas','Transportan la proteína del RER al Golgi'],['Golgi','Modifica, clasifica y empaqueta'],['Vesícula de secreción','Se desplaza por el citoesqueleto'],['Exocitosis','Se fusiona con la membrana y libera el contenido']];
+S.push(`<section class="slide" ${col(C.teal)}><span class="kick">Integración</span><h2>Ruta de síntesis y secreción de proteínas</h2>
+<div class="flow">${steps.map((s,i)=>`<div class="step"><div class="n">${i+1}</div><h4>${s[0]}</h4><p>${s[1]}</p></div>${i<steps.length-1?'<div class="arrow">›</div>':''}`).join('')}</div>
+<div class="flow-note"><div class="card"><h3>Otros destinos desde el Golgi</h3><ul><li>Lisosomas con enzimas hidrolíticas</li><li>Proteínas de la membrana plasmática</li></ul></div>
+<div class="card"><h3>Energía y soporte</h3><ul><li>Las mitocondrias aportan el ATP en cada paso</li><li>Microtúbulos y actina guían las vesículas</li></ul></div></div></section>`);
+
+// resumen
+S.push(`<section class="slide" ${col(C.ani)}><span class="kick">Resumen</span><h2>Las estructuras de un vistazo</h2>
+<div class="tiles">${O.map(o=>`<div class="tile" style="--c:${o.c}"><h4>${o.n}</h4><p>${o.r}</p></div>`).join('')}</div></section>`);
+
+// sección 2
+S.push(`<section class="slide section" ${col(C.veg)}><div class="big">02</div><span class="kick">Parte 2</span><h2>Estructura y función celular</h2><p>Cada tipo celular tiene una combinación de estructuras que explica su trabajo. Veremos cuatro ejemplos.</p></section>`);
+
+// tipos celulares
+T.forEach((t,i)=>{
+ S.push(`<section class="slide" ${col(t.c)}>
+ <div style="height:100px"><span class="kick">Tipo celular ${i+1} de ${T.length}</span><h2 style="font-size:44px">${t.n}</h2><p class="tag">${t.t}</p></div>
+ <div class="ct"><div class="vis"><div class="disc"><svg viewBox="0 0 240 240">${SV[t.s]}</svg></div></div>
+ <div><div class="rows">${t.r.map(r=>`<div class="row"><b>${r[0]}</b><div class="ar">→</div><span>${r[1]}</span></div>`).join('')}</div>
+ <p class="key">${t.k}</p>${t.x?`<p class="nota" style="max-width:none;margin-top:8px">${t.x}</p>`:''}</div></div></section>`);
+});
+
+// comparación
+S.push(`<section class="slide" ${col(C.amber)}><span class="kick">Comparación</span><h2>Cuatro células, cuatro soluciones</h2>
+${tbl(['Célula','Función principal','Estructuras que la explican'],[
+['Enterocito','Absorber nutrientes','Microvellosidades, mitocondrias, uniones estrechas'],
+['Célula muscular esquelética','Contraerse','Miofibrillas, retículo sarcoplásmico, mitocondrias'],
+['Neurona','Transmitir el impulso nervioso','Dendritas, axón, membrana excitable, RER'],
+['Célula secretora pancreática','Secretar enzimas digestivas','RER, Golgi, gránulos de zimógeno']])}
+</section>`);
+
+// conclusiones
+S.push(`<section class="slide" ${col(C.ani)}><span class="kick">Cierre</span><h2>Ideas para llevarse</h2>
+<div class="agenda" style="grid-template-columns:1fr 1fr">
+<div class="card"><h3>Conclusiones</h3><ul><li>Procariontes: sin núcleo ni organelos membranosos</li><li>Cada organelo tiene una estructura que explica su función</li><li>Mitocondrias y cloroplastos: doble membrana y ADN propio</li><li>Las células especializadas amplían las estructuras que más necesitan</li></ul></div>
+<div class="card"><h3>Preguntas de repaso</h3><ul><li>¿Qué estructuras distinguen una célula vegetal de una animal?</li><li>¿Por qué el enterocito tiene tantas mitocondrias?</li><li>¿Qué papel cumple el retículo sarcoplásmico?</li><li>¿Qué organelos participan en la secreción de una enzima digestiva?</li></ul></div>
+</div></section>`);
+
+/* ---------- Motor de la presentación ---------- */
+const stage=document.getElementById('stage');
+stage.innerHTML=S.join('');
+const slides=[...stage.querySelectorAll('.slide')];
+let cur=0;
+function show(n){cur=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>s.classList.toggle('active',i===cur));
+ document.getElementById('cnt').textContent=(cur+1)+' / '+slides.length;
+ document.getElementById('bar').style.width=((cur+1)/slides.length*100)+'%';
+ try{history.replaceState(null,'','#'+(cur+1))}catch(e){}}
+function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+addEventListener('keydown',e=>{
+ if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(cur+1)}
+ else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(cur-1)}
+ else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);
+ else if(e.key==='f'||e.key==='F')toggleFS();});
+function toggleFS(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()}
+document.getElementById('prev').onclick=()=>show(cur-1);
+document.getElementById('next').onclick=()=>show(cur+1);
+document.getElementById('fs').onclick=toggleFS;
+let tx=null;addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)show(cur+(d<0?1:-1));tx=null});
+const h=parseInt(location.hash.slice(1));show(isNaN(h)?0:h-1);
+</script>
+</body>
+</html>
